@@ -12,17 +12,18 @@ module.exports = async function (context, req) {
 
         const database = client.db("Cluster0");
         const collection = database.collection("tasks");
-        const result = await collection.find();
-
-        console.log(`${result.insertedCount} documents were inserted with the _id: ${result.insertedId}`,);
-
+        collection.find({}).toArray(function(error, documents){
+            if (error) throw error;
+            console.log(documents)
+            const responseMessage = {response: documents};
+            context.res = {
+                status: 200,
+                body: responseMessage
+            };
+        });
     } finally {
         await client.close();
-        const responseMessage = {response: task};
-        context.res = {
-            status: 200,
-            body: responseMessage
-        };
+
     }
 
 }
